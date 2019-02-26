@@ -1,0 +1,178 @@
+git add <file> 
+把文件添加到暂存区(index/stage)
+
+rm <file> 
+删除文件，但是并不在暂存区（stage)删除
+
+git rm <file> 
+在本地和暂存区一起删除文件
+
+git rm --cached <file>
+只在暂存区删除文件，工作目录中的文件还是不变的
+
+git commit 
+代码提交，使用默认设置的文本编辑工具进行编辑，然后保存退出，即可提交成功
+
+git commit -m "<代码提交说明>" [<文件名>] 
+代码快捷提交，提交说明直接输入
+
+git log
+显示历史提交的log，有作者信息和时间信息以及提交说明
+
+git log -p -2
+显示历史提交log -p 代表比较详细的方式显示，可以看到和上次提交的一个差异 -2 指定的是显示最近两次提交的log
+
+git log --pretty=oneline
+只用一行显示提交的log ，只显示哈希值和文件说明
+
+git log --oneline
+和 git log --pretty=oneline 一样，但是只显示哈希值的前几位
+
+git log --graph --oneline
+可以显示分支的一些变化，以简易线图像来显示
+
+git log --stat 
+可以相对清晰的看到哪些文件及文件夹做了改变，具体改变细节是看不到的
+
+git relog
+可以看到这个仓库所有的行为，其中不只是包含提交的log，还可以看到例如 HEAD 指针的checkout 动作 和 reset 动作等等。
+
+git reset --soft <索引值>
+HEAD 指针和 HEAD指针指向的分支指针一起移动到对应索引值的位置，不会更新暂存区和当前的工作目录，很安全
+
+git reset --mixed <索引值>
+HEAD 指针和 HEAD指针指向的分支指针一起移动到对应索引值的位置，并且用该索引值的所有文件覆盖暂存区，不会更新当前工作目录
+默认不指定 --soft --hard --mixed 则使用默认的--mixed 
+
+git reset --hard <索引值>
+注意： 该命令非常危险，会把工作目录和暂存区更新而且并不会有任何提示！！ 所以使用该命令之前确保所有修改已经提交到仓库。
+HEAD 指针和 HEAD指针指向的分支指针一起移动到对应索引值的位置，并且用该索引值的所有文件覆盖暂存区和当前的工作目录。
+
+git reset [<索引值>] 文件名
+因为没有指定 --soft --hard 和 --mixed 参数，则使用默认的--mixed参数
+reset 如果后面跟上文件名的时候， HEAD指针和HEAD指针指向的branch 指针并不会跟着一起移动。 因为默认参数是--mixed，
+所以该动作是从指定的索引值的位置取出对应的文件，并用该文件更新暂存区的文件，并不会更新工作目录的文件，
+如果还想用暂存区的文件更新当前的工作目录的话，可以继续使用git checkout <file> 来用暂存区文件更新当前工作目录中的这个文件。
+还有需要注意的是加上文件名之后，就不在支持 --soft --hard 参数，而且HEAD指针和HEAD指针指向的branch指针并不会移动。具体可以这样体会，
+指针只能指向整个仓库的整个快照，并不能指向某一个文件，所以设计为不更改。 另外如果使用 --soft的话是没有任何意义的，之所以不使用 --hard，
+因为可以使用git checkout <索引值> <文件名>
+
+git checkout <分支名/索引值>
+移动的是HEAD指针，但是并不移动HEAD指针指向的branch指针。 如果后面跟的是分支名，那么就是将HEAD指针指向指定的分支指针上，切换到该分支上，
+下次提交，HEAD指针和指定的该分支指针一起向后移动。
+如果后面跟的是索引值的话，那么就会进入HEAD分离模式，初步看下来没什么意义。
+
+git chekout <索引值> <文件名>
+checkout 后面如果跟上文件名，也不会更新HEAD指针，这个命令很危险！会用索引值的文件更新暂存区和当前工作目录并不会有任何提示！！
+
+git checkout [--]<文件名>
+如果checkout 加上了文件名，但是又没有指定索引值，它只会用当前暂存区的这个文件覆盖当前工作目录下的这个文件。
+
+××× git reset 和 git checkout 相关的深入理解可以参考一下下面两篇blog：
+https://git-scm.com/book/zh/v2/Git-工具-重置揭密
+http://www.cnblogs.com/hutaoer/archive/2013/05/07/git_checkout.html?utm_source=tuicool&utm_medium=referral
+
+git diff 
+用git默认工具是显示所有当前工作目录和暂存区不同的所有区别
+
+git diff <文件名>
+用git默认工具显示指定文件，当前工作目录和暂存区文件的的区别
+
+git diff --cached [<文件名>]
+和git diff [<文件名>] 类似，只不过是显示暂存区和HEAD指向的仓库索引值文件的区别
+
+git difftool [--cached] [<文件名>]
+和上面git diff 的方式除了使用工具是自定义的以外，其它的都是一样的。 difftool 的工具是可以自己指定的，例如可以使用beyond compare等
+
+git difftool --dir-diff [<commit-id> [<commit-id>]] [--][path]
+git difftool [--cached] [<文件名>] 如果有多个文件的话，是工具依次弹出的，只有关闭一个文件比较之后，才会弹出另外一个文件。
+但是加上 --dir-diff之后 可以比较文件夹的不同，这样就可以把所有的不同的文件一起展示，方便随时查看。
+git difftool  如果指定了一个commit-id 就是相当于：将对应的commit-id 与本地工作目录做比较
+git difftool  如果指定了两个commit-id 就是相当于：在仓库中分别提取两个 commit-id 的内容，然后做比较
+git branch -v
+显示该仓库所有本地分支,以及分支对应的索引和分支最后一次commit的信息
+
+git branch -a 
+显示仓库所有的分支，其中最重要的是我们可以看到远程服务器的分支
+
+git branch <分支名>
+创建一个新的分支
+
+git branch -f <要移动分支名> <移动位置索引值>  
+这个功能用git reset --soft <索引值>就可以实现，主要是移动指定的分支指针到指定的索引值的位置
+
+git branch -d <要删除的分支名>
+用来删除指定的本地分支
+
+git branch -D <要删除的分支>
+这个是强制删除，为什么需要强制删除呢？ 因为如果你的分支没有被合并的话正常用 -d 是不能删除的，只能使用-D强制删除
+
+git push <远程仓库名/远程仓库地址> --delete <需要删除的分支>
+删除远程库的分支
+
+git merge <分支名>
+首先需要用 git checkout <需要合并到的分支>，跳到需要被合并的分支（接受修改的分支），然后执行命令git merge <分支名>，这个<分支名>就是合并的源（有新内容的分支）
+如果想深入理解git 合并内部具体实现细节可以参考下面的blog，会详细解释三种情况merge会怎么处理 ：https://blog.csdn.net/lixiaokang_cool/article/details/15339313
+
+git merge --no-ff -m "commit comment" <分支名>
+如果不加 --no-ff 如果可以merge可以使用fast forward 的话通过 git log --graph --oneline 就看不到层经有分支出现过，只能看到被合并的分支上有提交。
+如果加上 --no-ff 可以看到对应的开发分支，这样就可以看出来曾经做过合并。
+详细信息可参考这篇blog：https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013758410364457b9e3d821f4244beb0fd69c61a185ae0000
+
+git remote -v 
+查看所有的远程库
+
+git remote add <远程仓库名> <远程仓库地址>
+把远程仓库的地址重新命名，下次使用push pull等操作的时候就可以使用远程仓库名来进行操作了
+
+git push <远程仓库名/远程仓库地址> [<要被推送的分支>]
+将 <要被推动的分支> (如果有的话)推送到对应的远程库上，如果没有指定要被推送的分支就会把所有的分支推送到指定的远程库上。
+如果远程库已经被其它开发者提前push了，自己就不能再push了，需要在本地merge后才可以在此push。merge可以使用fetch+merge(建议)或者使用 pull。
+
+git push -f <远程仓库名> <要被推送的分支>
+强制推送<要被推送的分支>到远程仓库。 什么时候会使用这个命令呢？ 我们一般在pull request 工作流模式下开发的时候，一般会将项目fork到自己的github主页，
+然后clone 到自己的本地，再本地新建一个分支(例如 dev 分支)，然后进行开发。 不过在开发的过程中我们为了防止文件丢失等，都会把代码commit的本地仓库，
+然后再push到远程仓库。 开发完成后我们会pull request 到原作者的仓库。 如果作者同意的话，会将你的改动merge到他的分支上。 不过现在存在的问题是，
+你在开发过程中会有很多次无用的提交(可能是每天下班之前，会把自己的修改commit到本地库，然后再push到远程库，不过这个只是做一个备份，并不是一个项目的节点)
+如果原作者merge 了你的修改，那么在原作者仓库的该分支中，使用 git log 会把你的所有的commit 信息都会看到，你的这些无用的提交注定会影响原作者的log 信息。
+所以一般原作者会让你只提交一次或几次关键节点，这样方便以后自己或者其他人看log的时候不会蒙蔽。 但是现在你的dev 分支已经有很多次commit 了，那现在怎么办呢？
+你可以在你本地工作树下使用 git checkout dev 切换到dev分支， 然后使用git reset --soft master 将HEAD指针和dev分支指针移到原来dev 分支建立额度地方。
+此时你的暂存区和本地工作树都是最新的，没有被当前HEAD指针指向的位置刷新。 所以现在你可以使用 git commit 命令 再次提交，这样你的dev分支相对于原来的master分支
+只有一次commit 了。 最终一步是把你的本地仓库 dev 分支 push到远程仓库， 这个时候就要使用git push -f <远程仓库名> <要推送的分支> (-f 是强制推送的意思，如果不加
+-f 是不能推送成功的，原因是远程库觉得你的新的 dev分支不是最新的，也就是不是原来 dev 分支的下一层，可能它会认为你搞错了)。
+
+git clone <远程库地址>
+把整个仓库克隆到本地，其中包括所有的远程分支全部都会克隆过来
+
+git fetch [<远程库地址>] [<远程分支名>]
+如果两个参数都不指定，相当于把 git remote 中所有的远程库中所有的分支全部取下来，并更新FETCH_HEAD 等；
+如果只是指定了<远程库地址>，相当于把该远程库地址所有的分支全部取下来，并更新FETCH_HEAD等；
+如果两参数都指定了，相当于从该远程库把该远程分支取下来，并更新FETCH_HEAD等
+我们可以通过 git difftool/diff  --dir-diff <commit-id>，来查看分支上最新的改动，然后再决定是否merge到当前工作目录。
+
+git pull <远程仓库名/远程仓库地址> <远程分支名>
+git pull 相当于 fetch + merge：相当于首先执行了git fetch <远程库地址> <远程分支名> 将远程库先取下来然后执行 git merge <远程仓库名/分支名> 来进行合并到本地。
+
+***git pull, fetch, merge 等更详细的解释可以参考这篇blog：https://www.cnblogs.com/ToDoToTry/p/4095626.html
+
+git stash 
+git stash save "comment"
+git stash apply ""
+git stash drop ""
+git stash pop
+git stash list
+...
+后面整理，详细参见这篇blog：https://www.cnblogs.com/tocy/p/git-stash-reference.html
+
+git tag 
+标签管理相关的内容后面整理。
+详见这篇blog：https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000/0013762144381812a168659b3dd4610b4229d81de5056cc000
+
+需要看下多个commit 合并怎么解决？？？
+
+
+
+
+
+
+
