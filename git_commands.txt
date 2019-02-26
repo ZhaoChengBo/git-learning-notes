@@ -171,6 +171,11 @@ git tag
 仓库多个commit 合并怎么解决？
 详见上面的 git push -f <远程仓库名> <要被推送的分支> 解释
 
+git rebase 和 git merge 区别和使用？？
+1.详见blog：http://gitbook.liuhui998.com/4_2.html
+2. https://www.cnblogs.com/xueweihan/p/5743327.html
+3.可以参考自己的实验文档 git_merge_and_rebase.doc
+
 
 
 
