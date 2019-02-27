@@ -105,10 +105,22 @@ git branch -d <要删除的分支名>
 用来删除指定的本地分支
 
 git branch -D <要删除的分支>
-这个是强制删除，为什么需要强制删除呢？ 因为如果你的分支没有被合并的话正常用 -d 是不能删除的，只能使用-D强制删除
+这个是强制删除本地分支，为什么需要强制删除呢？ 因为如果你的分支没有被合并的话正常用 -d 是不能删除的，只能使用-D强制删除
 
-git push <远程仓库名/远程仓库地址> --delete <需要删除的分支>
-删除远程库的分支
+git push <远程仓库名/远程仓库地址> -d <需要删除的分支>
+删除远程库的分支，这个时候想要成功的删除远程库上的分支，必须要有远程仓库的写权限。
+
+git branch -r -D <远程仓库名>/<远程分支名>  例如: git branch -r -D upstream/bug_fix1
+有的时候你可能会把别人仓库的远程分支取下来，用来查看和本地的区别。例如我是review的人，别人向我 pull request 的时候我可能需要看看他修改了哪些内容？
+当然我可以在github上直接查看，但是其实不是很直观，有的时候需要使用工具，例如git设置的difftool。 那我我们就应该把他的远程分支使用fetch 命令去到我们的本地，
+然后和我们当前master最新的版本做比较实用 git dfftool --dir-diff master（假设现在切到提交者他的分支上）。 如果比较完没有问题的话，我们就可以直接去github上
+选择merge pull request。 截至到现在我们当时的fetch 下来提交者的分支已经没有用了，我们就可以使用这个命令删除。 之所以不能用git branch -d/-D 是因为不是本地分支；
+不能使用 git push <远程仓库名/远程仓库地址> -d <需要删除的分支> 因为我们不是要删除提交者远程库的该分支而是我们本地的远程分支，况且我们也没有写对方远程库的权限。
+git help branch 解释 -r :
+-r
+--remotes
+List or delete (if used with -d) the remote-tracking branches.
+分支删除相关的相关的命令可以参考这个blog：https://www.cnblogs.com/VAllen/p/git-remote-delete-origin-branches.html
 
 git merge <分支名>
 首先需要用 git checkout <需要合并到的分支>，跳到需要被合并的分支（接受修改的分支），然后执行命令git merge <分支名>，这个<分支名>就是合并的源（有新内容的分支）
